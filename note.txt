@@ -1,0 +1,60 @@
+composer create-project --prefer-dist laravel/laravel my-project
+php artisan make:controller MyController --resource
+php artisan make:model MyModel -m
+php artisan make:model Post -mf
+
+php artisan make:migration add_idt_and_description_to_tour_table --table=Tour
+php artisan make:migration create_users_table
+php artisan migrate
+php artisan migrate:reset
+php artisan migrate:refresh 
+
+
+
+composer require yoeunes/toastr
+
+
+php artisan make:seeder UsersTableSeeder
+php artisan db:seed
+
+-Chạy lại các seeders sau khi làm mới cơ sở dữ liệu: php artisan migrate:fresh --seed
+-Chạy một seeder cụ thể: php artisan db:seed --class=UsersTableSeeder
+
+làm mới cơ sở dữ liệu:
+    php artisan migrate:fresh --seed
+
+
+php artisan make:middleware CheckAuthenticated
+php artisan make:request StoreUserRequest
+
+post_catalogue_translate
+
+
+ // HT.setupSelectMultiple = () => {
+       
+    //     // if($('.selectVariant').length) {
+    //     //     $('.selectVariant').each(function() {
+    //     //         console.log(1231)
+    //     //         let _this = $(this);
+    //     //         let attributeCatalogueId = _this.attr('data-catid');
+    //     //         let attribute = ''; // Giả sử 'attribute' đã được xác định ở đâu đó trong mã của bạn
+    
+    //     //         if (attribute !== '') { // Kiểm tra attribute có giá trị để gửi request AJAX
+    //     //             $.get('ajax/attribute/loadAttribute', {
+    //     //                 attribute: attribute,
+    //     //                 attributeCatalogueId: attributeCatalogueId
+    //     //             }, function (json) {
+    //     //                 if (json.items !== undefined && json.items.length) { // Kiểm tra json.items có tồn tại và có dữ liệu
+    //     //                     for (let i = 0; i < json.items.length; i++) {
+    //     //                         // Tạo option mới và thêm vào select box
+    //     //                         let option = new Option(json.items[i].text, json.items[i].id, true, true);
+    //     //                         _this.append(option).trigger('change'); // Kích hoạt sự kiện change
+    //     //                     }
+    //     //                 }
+    //     //             });
+    //     //         }
+    
+    //     //         HT.getSelect2(_this); // Gọi hàm HT.getSelect2 để thiết lập cho select box _this
+    //     //     });
+    //     // }
+    // }
