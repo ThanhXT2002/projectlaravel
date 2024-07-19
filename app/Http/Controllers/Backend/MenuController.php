@@ -120,9 +120,10 @@ class MenuController extends Controller
                 'backend/plugins/bootstrap-switch/js/bootstrap-switch.min.js',
                 'backend/plugins/select2/js/select2.full.min.js',
                 'backend/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js',
-                'backend/library/location.js',
                 'backend/plugins/ckfinder_2/ckfinder.js',
                 'backend/library/finder.js',
+                'backend/library/menu.js',
+                
             ],
             'css'=>[
                 'backend/plugins/select2/css/select2.min.css',

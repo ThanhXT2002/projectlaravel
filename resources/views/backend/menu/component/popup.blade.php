@@ -1,4 +1,5 @@
 <div class="modal fade" id="createMenuCatalogue">
+    <form action="" method="post">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <div class="col-lg-12 mb-3">
-                    <form action="" method="post">
+                    
                         <label for="" class="control-label text-left">Tên vị trí hiển thị<span
                                 class="text-danger">(*)</span></label>
                         <input type="text" name="name" value="{{ old('menu', $menu->name ?? '') }}"
@@ -22,7 +23,7 @@
                         class="form-control form-control-sm rounded-0 shadow border border-info" placeholder=""
                         autocomplete="off">
                 </div>
-                </form>
+                
 
             </div>
             <div class="modal-footer">
@@ -33,5 +34,6 @@
         </div>
         <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
+   
+    </form>
 </div>
