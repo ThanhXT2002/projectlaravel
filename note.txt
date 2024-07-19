@@ -29,6 +29,10 @@ php artisan make:request StoreUserRequest
 
 post_catalogue_translate
 
+git add .
+git commit -m " ....... commit"
+git push origin main
+
 
  // HT.setupSelectMultiple = () => {
        
