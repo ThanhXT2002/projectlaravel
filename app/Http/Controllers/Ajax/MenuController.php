@@ -4,61 +4,49 @@ namespace App\Http\Controllers\Ajax;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Repositories\Interfaces\AttributeRepositoryInterface  as AttributeRepository;
-use App\Models\Language;
+use App\Repositories\Interfaces\MenuRepositoryInterface  as MenuRepository;
+// use App\Models\Language;
+use App\Http\Requests\StoreMenuCatalogueRequest;
+use App\Repositories\Interfaces\MenuCatalogueRepositoryInterface  as MenuCatalogueRepository;
+use App\Repositories\Interfaces\MenuCatalogueServiceInterface  as MenuCatalogueService;
 
 
-class AttributeController extends Controller
+
+class MenuController extends Controller
 {
-    protected $attributeRepository;
-    protected $language;
+    protected $menuCatalogueRepository;
+    protected $menuCatalogueService;
+
+    // protected $language;
 
     public function __construct(
-        AttributeRepository $attributeRepository
+        MenuCatalogueRepository $menuCatalogueRepository,
+        MenuCatalogueService $menuCatalogueService
+
     ){
-        $this->attributeRepository = $attributeRepository;
-        $this->middleware(function($request, $next){
-            $locale = app()->getLocale(); // vn en cn
-            $language = Language::where('canonical', $locale)->first();
-            $this->language = $language->id;
-            return $next($request);
-        });
+        $this->menuCatalogueRepository = $menuCatalogueRepository;
+        $this->menuCatalogueService = $menuCatalogueService;
+
+        // $this->middleware(function($request, $next){
+        //     $locale = app()->getLocale(); // vn en cn
+        //     $language = Language::where('canonical', $locale)->first();
+        //     $this->language = $language->id;
+        //     return $next($request);
+        // });
     }
 
-    public function getAttribute(Request $request){
-        
-        $payload = $request->input();
-        $attributes = $this->attributeRepository->searchAttributes($payload['search'], $payload['option'], $this->language);
-
-        $attributeMapped = $attributes->map(function($attribute){
-            return [
-                'id' => $attribute->id,
-                'text' => $attribute->attribute_language->first()->name,
-            ];
-        })->all();
-       
-        return response()->json(array('items' => $attributeMapped)); 
-    }
-
-    public function loadAttribute(Request $request){
-        $payload['attribute'] = json_decode(base64_decode($request->input('attribute')),TRUE);
-        $payload['attributeCatalogueId']= $request->input('attributeCatalogueId');
-        $attributeArray = $payload['attribute'][$payload['attributeCatalogueId']];
-
-        $attributes = [];
-        if(count($attributeArray)){
-            $attributes = $this->attributeRepository->findAttributeByIdArray($attributeArray, $this->language);
+    public function createCatalogue(StoreMenuCatalogueRequest $request){
+        $menuCatalogue = $this->menuCatalogueService->create($request);
+        if($menuCatalogue !== FALSE){
+            return response()->json([
+                'message' => 'Tao nhom menu thah cong',
+                'code' => 0,
+                'data' =>  $menuCatalogue,
+            ]);
         }
-
-        $temp = [];
-        if(count($attributes)){
-            foreach ($attributes as $key => $val) {
-                $temp[]=[
-                    'id' =>$val->id,
-                    'text'=>$val->name,
-                ];
-            }
-        }        
-        return response()->json(array('items' => $temp)); 
+        return response()->json([
+            'message' => 'Co van de xay ra, hay thu lai',
+            'code' => 1
+        ]);
     }
 }

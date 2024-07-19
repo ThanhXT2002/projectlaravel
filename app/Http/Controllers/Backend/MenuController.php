@@ -8,22 +8,27 @@ use App\Http\Requests\UpdateMenuRequest;
 use Illuminate\Http\Request;
 use App\Services\Interfaces\MenuServiceInterface  as MenuService;
 use App\Repositories\Interfaces\MenuRepositoryInterface as MenuRepository;
+use App\Repositories\Interfaces\MenuCatalogueRepositoryInterface as MenuCatalogueRepository;
 
 class MenuController extends Controller
 {
 
     protected $menuService;
     protected $menuRepository;
+    protected $menuCatalogueRepository;
    
 
     public function __construct(
         MenuService $menuService,   
         MenuRepository $menuRepository,
+        MenuCatalogueRepository $menuCatalogueRepository,
+
       
     ){
         $this->menuService = $menuService;
         $this->menuRepository = $menuRepository;
-      
+        $this->menuCatalogueRepository = $menuCatalogueRepository;
+
     }
 
 
@@ -61,11 +66,13 @@ class MenuController extends Controller
 
     public function create(){
         $this->authorize('modules', 'menu.create');
+        $menuCatalogues = $this->menuCatalogueRepository->all();
         $config = $this->config();
         $config['seo'] = __('messages.menu');
         $config['method'] = 'create';
         return view('backend.menu.store',compact(
             'config',
+            'menuCatalogues'
         ));
     }
 

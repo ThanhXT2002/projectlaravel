@@ -17,9 +17,13 @@
                 </div>
             </div>
             <div class="card-body">
-                <select name="munu_catalogue_id"
+                <select name="menu_catalogue_id"
                     class="form-control form-control-sm rounded-0 shadow border border-info select2">
+                    
                     <option value="">[Chọn vị trí hiển thị]</option>
+                    @foreach ($menuCatalogues as $key=>$val)
+                        <option value="{{$val->id}}">{{$val->name}}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
