@@ -137,6 +137,10 @@
         })
     }
 
+    HT.renderModelMenu = () => {
+        
+    }
+
     
     $(document).ready(function() {
         HT.createMenuCatelogue()

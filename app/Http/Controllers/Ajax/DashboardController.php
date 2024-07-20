@@ -51,16 +51,24 @@ class DashboardController extends Controller
 
     public function getMenu(Request $request){
         $model= $request->input('model');
-        $serviceInterfaceNamespace = '\App\Repositories\\' . ucfirst($model) . 'Service';
+        $serviceInterfaceNamespace = '\App\Repositories\\' . ucfirst($model) . 'Reposotory';
         if (class_exists($serviceInterfaceNamespace)) {
             $serviceInstance = app($serviceInterfaceNamespace);
         }
-        // $object = $serviceInterfaceNamespace->pagination($request, $this->language);
         $agruments = $this->paginationArgrument($model);
+        $object = $serviceInstance->pagination(...array_values($agruments));
+        return response()->json(['data' => $object]); 
     }
 
     private function paginationArgrument(string $model = ''):array{
         $model = Str::snake($model);
+        $join = [
+            [$model.'_language as tb2', 'tb2,'.$model.'_id', '=', $model.'s.id'],
+        ];
+        if (strpos($model, '_catalogue') === false) {
+            $join[] = [''.$model.'_catalogue_'.$model.' as tb3', ''.$model.'.id', '=', 'tb3.'.$model.'_id'];
+        }
+        
         return [
             'select' => ['id', 'name'],
             'condition' => [
@@ -75,11 +83,8 @@ class DashboardController extends Controller
                 
             ],
             'orderBy' => [$model.'s.id', 'DESC'],
+            'join' => $join,
             'relations' => [],
-            'join' => [
-                [$model.'_language as tb2', 'tb2,post_id', '=', $model.'s.id'],
-                ['post_catalogue_post as tb3', 'post.id', '=', ' tb3.pist_id'],
-            ],
         ];
     }
 
