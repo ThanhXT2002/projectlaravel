@@ -53,16 +53,16 @@
                         </div>
                         <div id="{{$key}}" class="collapse" data-parent="#accordion">
                             <div class="card-body">
-                               <form action="" method="get" data-model= {{$key}} class="search-model">
+                              
                                 <div class="form-row">
                                     <input type="text" 
-                                        class="form-control form-control-sm rounded-0"
+                                        class="form-control search-menu form-control-sm rounded-0"
                                         value=""
                                         name="keyword"
                                         placeholder="Nhap 2 ky tu de tiem kiem...."
                                         >
                                 </div>
-                               </form>
+                               
                                <div class="menu-list mt-3">
                                 <div id="paginationMenu">
                                     

@@ -52,16 +52,18 @@ class DashboardController extends Controller
     public function getMenu(Request $request){
         $model= $request->input('model');
         $page = ($request->input('page')) ?? 1;
+        $keyword = ($request->string('keyword')) ?? null;
+
         $serviceInterfaceNamespace = '\App\Repositories\\' . ucfirst($model) . 'Reposotory';
         if (class_exists($serviceInterfaceNamespace)) {
             $serviceInstance = app($serviceInterfaceNamespace);
         }
-        $agruments = $this->paginationArgrument($model);
+        $agruments = $this->paginationArgrument($model, $keyword );
         $object = $serviceInstance->pagination(...array_values($agruments));
         return response()->json($object); 
     }
 
-    private function paginationArgrument(string $model = ''):array{
+    private function paginationArgrument(string $model = '',  string $keyword ):array{
         $model = Str::snake($model);
         $join = [
             [$model.'_language as tb2', 'tb2,'.$model.'_id', '=', $model.'s.id'],
@@ -69,14 +71,19 @@ class DashboardController extends Controller
         if (strpos($model, '_catalogue') === false) {
             $join[] = [''.$model.'_catalogue_'.$model.' as tb3', ''.$model.'.id', '=', 'tb3.'.$model.'_id'];
         }
+
+        $condition = [
+            'where' => [
+                ['tb2,language_id', '=', $this->language],
+            ],
+        ];
+        if(!is_null($keyword)){
+            $condition['keyword'] = addslashes($keyword);
+        }
         
         return [
             'column' => ['id', 'name','canonical'],
-            'condition' => [
-                'where' => [
-                    ['tb2,language_id', '=', $this->language],
-                ]
-            ],
+            'condition' =>  $condition,
             'perpage' =>25,
             'paginationConfig' => [
                 'path'=>$model.'/index',

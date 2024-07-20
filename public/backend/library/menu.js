@@ -125,13 +125,25 @@
                 model: _this.attr('data-model')
             };
             let target = _this.parents('.card').find('.menu-list');
-            HT.sendAjaxGetMenu(option, target )
+            let menuRowClass = HT.checkMenuRowExit()
+
+            HT.sendAjaxGetMenu(option, target, menuRowClass )
     
             
         });
     };
 
-    HT.sendAjaxGetMenu = (option, target) => {
+    HT.checkMenuRowExit = () =>{
+        let menuRowClass = $('.menu-item').map(function(){
+            let allClasses = $(this).attr('class').split(' ').slice(3).join('')
+
+            return allClasses
+        }).get()
+
+        return menuRowClass
+    }
+
+    HT.sendAjaxGetMenu = (option, target, menuRowClass) => {
         $.ajax({
             url: 'ajax/dashboard/getMenu', // URL xử lý yêu cầu AJAX
             type: 'GET', // Phương thức gửi dữ liệu
@@ -143,7 +155,7 @@
             success: function(res) {
                 let html = '';
                 for (let i = 0; i < res.data.length; i++) {
-                    html += HT.renderModelMenu(res.data[i]); // Gọi hàm để tạo HTML từ dữ liệu
+                    html += HT.renderModelMenu(res.data[i], menuRowClass); // Gọi hàm để tạo HTML từ dữ liệu
                 }
                 html += HT.menuLinks(res.links); // Thêm liên kết phân trang
                 target.html(html)
@@ -158,25 +170,30 @@
     
 
     HT.menuLinks = (links) => {
-        let paginationUl = $('<ul>').addClass('pagination'); 
-        $.each(links, function(index, link) {
-            let liClass = 'page-item';
-            if (link.active) {
-                liClass += ' active';
-            } else if (!link.url) {
-                liClass += ' disabled';
-            }
-            let li = $('<li>').addClass(liClass);
-            if (link.label == 'pagination.previous') {
-                let a = $('<a>').addClass('page-link').attr('aria-hidden', true).html('<');
-                li.append(a);
-            } else if (link.label == 'pagination.next') {
-                let a = $('<a>').addClass('page-link').attr('aria-hidden', true).html('>');
-                li.append(a);
-            }
-            paginationUl.append(li); 
-        });
-        let nav = $('<nav>').append(paginationUl); 
+        let nav = $('<nav>')
+        if(links.length > 3){
+            let paginationUl = $('<ul>').addClass('pagination'); 
+            $.each(links, function(index, link) {
+                let liClass = 'page-item';
+                if (link.active) {
+                    liClass += ' active';
+                } else if (!link.url) {
+                    liClass += ' disabled';
+                }
+                let li = $('<li>').addClass(liClass);
+                if (link.label == 'pagination.previous') {
+                    let a = $('<a>').addClass('page-link').attr('aria-hidden', true).html('<');
+                    li.append(a);
+                } else if (link.label == 'pagination.next') {
+                    let a = $('<a>').addClass('page-link').attr('aria-hidden', true).html('>');
+                    li.append(a);
+                }
+                paginationUl.append(li); 
+            });
+            nav.append(paginationUl); 
+
+        }
+        
         return nav;
     }
 
@@ -189,19 +206,17 @@
                 page:_this.text()
             }
             let target = _this.parents('.menu-list')
-            HT.sendAjaxGetMenu(option, target)
+            let menuRowClass = HT.checkMenuRowExit()
+            HT.sendAjaxGetMenu(option, target, menuRowClass)
         })
     }
 
 
-
-
-
-    HT.renderModelMenu = (object) => {
+    HT.renderModelMenu = (object, renderModelMenu ) => {
     let html = '';
     html += '<div class="m-item">';
     html += '    <div class="icheck-success d-inline">';
-    html += '        <input type="checkbox" id="' + object.canonical + '" value="' + object.canonical + '" name="" class="choose-menu" />';
+    html += '        <input type="checkbox" '+((renderModelMenu.includes(object.canonical)) ? 'checked' : '')+' id="' + object.canonical + '" value="' + object.canonical + '" name="" class="choose-menu" />';
     html += '        <label for="' + object.canonical + '" class="text-muted font-weight-normal no-select">' + object.name + '</label>';
     html += '    </div>';
     html += '</div>';
@@ -235,6 +250,27 @@
             }
         });
     };
+
+
+    HT.searchMenu = () => {
+      
+        $(document).on('keyup', '.search-menu', function(e){
+            let _this = $(this)
+            let keyword = _this.val()
+            let option = {
+                model: _this.parents('.collapse').attr('id'),
+                keyword:  keyword
+            }
+            clearTimeout(typingTimer)
+            typingTimer = setTimeout(function(){
+                let menuRowClass = HT.checkMenuRowExit()
+                let target = _this.siblings('.menu-list')
+                HT.sendAjaxGetMenu(option, target, menuRowClass)
+            }, doneTypingInterval)
+
+            
+        })
+    }
     
 
     
