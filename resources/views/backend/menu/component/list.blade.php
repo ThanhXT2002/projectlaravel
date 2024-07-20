@@ -63,6 +63,17 @@
                                         >
                                 </div>
                                </form>
+                               <div class="menu-list mt-3">
+                                {{-- <div class="m-item">
+                                    <div class="icheck-success d-inline">
+                                        <input type="checkbox" id="menuCheckbox" 
+                                        value="" name="" class="menuInputCheckbox" />
+                                        <label for="menuCheckbox" class="text-muted font-weight-normal no-select">
+                                            menu 
+                                        </label>
+                                    </div>
+                                </div> --}}
+                               </div>
                             </div>
                         </div>
                     </div>

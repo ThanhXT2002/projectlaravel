@@ -57,7 +57,7 @@ class DashboardController extends Controller
         }
         $agruments = $this->paginationArgrument($model);
         $object = $serviceInstance->pagination(...array_values($agruments));
-        return response()->json(['data' => $object]); 
+        return response()->json($object); 
     }
 
     private function paginationArgrument(string $model = ''):array{
@@ -70,7 +70,7 @@ class DashboardController extends Controller
         }
         
         return [
-            'select' => ['id', 'name'],
+            'column' => ['id', 'name','canonical'],
             'condition' => [
                 'where' => [
                     ['tb2,language_id', '=', $this->language],

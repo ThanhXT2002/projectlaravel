@@ -124,8 +124,15 @@
                 type: 'GET', // Phương thức gửi dữ liệu
                 data: option, // Dữ liệu được gửi
                 dataType: 'json', // Kiểu dữ liệu nhận về
+                beforSend: function(){
+                    _this.parents('card').find('.menu-list').html('')
+                },
                 success: function(res) {
-                   
+                   let html = ''
+                   for(let i = 0; i < res.data.length; i++){
+                    html += HT.renderModelMenu(res.data[i])
+                   }
+                   _this.parents('card').find('.menu-list').html(html)
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     // Xử lý lỗi khi yêu cầu thất bại
@@ -137,9 +144,18 @@
         })
     }
 
-    HT.renderModelMenu = () => {
-        
-    }
+    HT.renderModelMenu = (object) => {
+
+        let html = ''
+        html += '<div class="m-item">'
+            html += '<div class="icheck-success d-inline">'
+                html += '<input type="checkbox" id="'+object.canonical+'" value="'+object.canonical+'" name="" class="menuInputCheckbox" />'
+                html += '<label for="'+object.canonical+'" class="text-muted font-weight-normal no-select">'+object.name+'</label>'
+            html += '</div>'
+        html += '</div>'
+
+        return html
+}
 
     
     $(document).ready(function() {
