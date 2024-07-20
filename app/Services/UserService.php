@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
  * Class UserService
  * @package App\Services
  */
-class UserService implements UserServiceInterface
+class UserService extends BaseService implements UserServiceInterface
 {
 
     protected $userRepository;

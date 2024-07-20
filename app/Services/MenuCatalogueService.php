@@ -30,16 +30,16 @@ class MenuCatalogueService implements MenuCatalogueServiceInterface
 
     public function paginate($request){
 
-        // $condition['keyword'] = addslashes($request->input('keyword'));
-        // $condition['publish'] = $request->integer('publish');
-        // $perPage = $request->integer('perpage');
-        // $menuCatalogues = $this->menuCatalogueRepository->pagination(
-        //     $this->paginateSelect(), 
-        //     $condition, 
-        //     $perPage, 
-        //     ['path' => 'MenuCatalogue/index'], 
-        // );
-        return [];
+        $condition['keyword'] = addslashes($request->input('keyword'));
+        $condition['publish'] = $request->integer('publish');
+        $perPage = $request->integer('perpage');
+        $menuCatalogues = $this->menuCatalogueRepository->pagination(
+            $this->paginateSelect(), 
+            $condition, 
+            $perPage, 
+            ['path' => 'menu/index'], 
+        );
+        return $menuCatalogues;
     }
 
     public function create($request){
@@ -128,9 +128,9 @@ class MenuCatalogueService implements MenuCatalogueServiceInterface
     private function paginateSelect(){
         return [
             'id',  
-            // 'name',
-            // 'publish',
-            // 'MenuCatalogue_catalogue_id'
+            'name',
+            'publish',
+            'keyword'
         ];
     }
 

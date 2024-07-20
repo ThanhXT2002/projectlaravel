@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Services\Interfaces\MenuServiceInterface  as MenuService;
 use App\Repositories\Interfaces\MenuRepositoryInterface as MenuRepository;
 use App\Repositories\Interfaces\MenuCatalogueRepositoryInterface as MenuCatalogueRepository;
+use App\Services\Interfaces\MenuCatalogueServiceInterface as MenuCatalogueService;
+
 use App\Models\Language;
 
 class MenuController extends Controller
@@ -18,18 +20,23 @@ class MenuController extends Controller
     protected $menuRepository;
     protected $menuCatalogueRepository;
     protected $language;
+    protected $menuCatalogueService;
    
 
     public function __construct(
         MenuService $menuService,   
         MenuRepository $menuRepository,
         MenuCatalogueRepository $menuCatalogueRepository,
+        MenuCatalogueService $menuCatalogueService,
+
 
       
     ){
         $this->menuService = $menuService;
         $this->menuRepository = $menuRepository;
         $this->menuCatalogueRepository = $menuCatalogueRepository;
+        $this->menuCatalogueService = $menuCatalogueService;
+
         $this->middleware(function($request, $next){
             $locale = app()->getLocale();
             $language = Language::where('canonical', $locale)->first();
@@ -43,7 +50,7 @@ class MenuController extends Controller
     public function index(Request $request){ 
         $this->authorize('modules', 'menu.index');
         
-        $menus = $this->menuService->paginate($request, 1);
+        $menuCatalogues = $this->menuCatalogueService->paginate($request, 1);
         $config = [
             'js'=> [
                 'backend/plugins/bootstrap-switch/js/bootstrap-switch.min.js',
@@ -61,12 +68,12 @@ class MenuController extends Controller
                 'backend/plugins/select2/css/select2.min.css',
                 'backend/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css',
             ],
-            'model' => 'menu'
+            'model' => 'MenuCatalogue'
         ];
         $config['seo'] = __('messages.menu'); 
        
         return view('backend.menu.index',compact(
-            'menus',
+            'menuCatalogues',
              'config',
              
         ));
