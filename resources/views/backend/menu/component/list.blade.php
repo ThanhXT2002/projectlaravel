@@ -37,7 +37,7 @@
                                     <li>Tiêu đề và đường dẫn của menu không được để trống.</li>
                                     <li>Hệ thống chỉ hỗ trợ tối đa 5 cấp menu</li>
                                 </ol>
-                                <a href="" class="btn btn-sm btn-outline-primary rounded-0 w-100">Thêm đường dẫn</a>
+                                <a href="" class="add-menu btn btn-sm btn-outline-primary rounded-0 w-100">Thêm đường dẫn</a>
                             </div>
                         </div>
                     </div>
@@ -132,20 +132,7 @@
                     <h5>Danh sách kiên kết này chưa có bất kỳ đường dẫn nào.</h5>
                     <p>Hãy nhấn vào <span class="text-info">"Thêm đường dẫn"</span> để bắt đầu thêm.</p>
                 </div>
-                <div class="row">
-                    <div class="col-lg-4">
-                        <input type="text" name="menu[name][]" value="" class="form-control form-control-sm rounded-0">
-                    </div>
-                    <div class="col-lg-6">
-                        <input type="text" name="menu[canonocal][]" value="" class="form-control form-control-sm rounded-0">
-                    </div>
-                    <div class="col-lg-1">
-                        <input type="text" name="menu[order][]" value="" class="form-control form-control-sm rounded-0">
-                    </div>
-                    <div class="col-lg-1 text-center">
-                        <div class="btn btn-info btn-sm"><i class="fas fa-trash"></i></div>
-                    </div>
-                </div>
+               
               </div>
             </div>
             <!-- /.card-body -->

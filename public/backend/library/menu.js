@@ -58,9 +58,65 @@
         })
     }
 
-    // Khi tài liệu đã sẵn sàng, gọi hàm createMenuCatelogue
+
+    HT.createMenuRow = () =>{
+        $(document).on('click', '.add-menu', function(e) {
+            e.preventDefault() 
+            let _this = $(this) 
+            $('.menu-wrapper').append(HT.menuRowHtml()).find('.notification').hide()
+        })
+    }
+
+    HT.menuRowHtml = ()=>{
+        let html
+        let $row  = $('<div>').addClass('row mb-3 menu-item')
+        const colums = [
+            {class: 'col-lg-4', name: 'menu[name][]'},
+            {class: 'col-lg-6', name: 'menu[canonical][]'},
+            {class: 'col-lg-1', name: 'menu[order][]', value: 0},
+            
+
+        ]
+
+        colums.forEach(col=>{
+            let $col = $('<div>').addClass(col.class)
+            let $input = $('<input>').attr('type', 'text')
+                        .addClass('form-control form-control-sm rounded-0' +((col.name == 'menu[order][]') ? 'int text-right' : ''))
+                        .attr('name', col.name)
+                        .attr('value', col.value)
+            $col.append($input)
+            $row.append($col)
+        })
+
+        let $removeCol = $('<div>').addClass('col-lg-1 text-center')
+        let $a = $('<a>').addClass('delete-menu btn btn-info btn-sm')
+        let $i = $('<i>').addClass('fas fa-trash')
+        $a.append($i)
+        $removeCol.append($a)
+        $row.append($removeCol)
+
+        return $row
+    }
+
+    HT.deleteMenuRow = ()  =>{
+            $(document).on('click', '.delete-menu', function(){
+                let _this = $(this)
+                _this.parents('.menu-item').remove()
+                HT.checkMenuItemLangth()
+            })
+    }
+
+    HT.checkMenuItemLangth = () =>{
+        if($('.menu-item').length === 0){
+            $('.notification').show()
+        }
+    }
+
+    
     $(document).ready(function() {
         HT.createMenuCatelogue()
+        HT.createMenuRow()
+        
     })
 
 })(jQuery);
