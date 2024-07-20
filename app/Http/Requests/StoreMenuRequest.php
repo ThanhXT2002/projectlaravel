@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+
 class StoreMenuRequest extends FormRequest
 {
     /**
@@ -23,14 +24,17 @@ class StoreMenuRequest extends FormRequest
     {
         return [
             'menu_catalogue_id' => 'gt:0',
-            
+            'menu.name'=>[
+                'required'
+            ]
         ];
     }
 
     public function messages(): array
     {
         return [
-            
+            'menu_catalogue_id.gt'=>'Ban chua chon nhom vi tri cua menu ',
+            'menu.name.required' => 'Ban phai chon it nhat 1 menu' 
         ];
     }
 }

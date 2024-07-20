@@ -44,12 +44,11 @@ class MenuService implements MenuServiceInterface
     public function create($request){
         DB::beginTransaction();
         try{
-
-            $payload = $request->except(['_token','send','re_password']);
-            // if($payload['birthday'] != null){
-            //     $payload['birthday'] = $this->convertBirthdayDate($payload['birthday']);
-            // }
-            $payload['password'] = Hash::make($payload['password']);
+            $payload = $request->only(['menu', 'menu_catalogue_id', 'type']);
+            if(count($payload['menu']['name'])){
+                
+            }
+           
             $menu = $this->menuRepository->create($payload);
             DB::commit();
             return true;

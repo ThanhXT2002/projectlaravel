@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Services\Interfaces\MenuServiceInterface  as MenuService;
 use App\Repositories\Interfaces\MenuRepositoryInterface as MenuRepository;
 use App\Repositories\Interfaces\MenuCatalogueRepositoryInterface as MenuCatalogueRepository;
+use App\Models\Language;
 
 class MenuController extends Controller
 {
@@ -16,6 +17,7 @@ class MenuController extends Controller
     protected $menuService;
     protected $menuRepository;
     protected $menuCatalogueRepository;
+    protected $language;
    
 
     public function __construct(
@@ -28,6 +30,12 @@ class MenuController extends Controller
         $this->menuService = $menuService;
         $this->menuRepository = $menuRepository;
         $this->menuCatalogueRepository = $menuCatalogueRepository;
+        $this->middleware(function($request, $next){
+            $locale = app()->getLocale();
+            $language = Language::where('canonical', $locale)->first();
+            $this->language = $language->id;
+            return $next($request);
+        });
 
     }
 
@@ -78,7 +86,7 @@ class MenuController extends Controller
 
     public function store(StoreMenuRequest $request)
     {
-        if($this->menuService->create($request)){
+        if($this->menuService->create($request, $this->language)){
             return redirect()->route('menu.index')->with('success','Thêm mới bản ghi thành công');
         }
         return redirect()->route('menu.index')->with('error','Thêm mới bản ghi không thành công. Hãy thử lại');
