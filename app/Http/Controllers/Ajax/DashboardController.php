@@ -51,6 +51,7 @@ class DashboardController extends Controller
 
     public function getMenu(Request $request){
         $model= $request->input('model');
+        $page = ($request->input('page')) ?? 1;
         $serviceInterfaceNamespace = '\App\Repositories\\' . ucfirst($model) . 'Reposotory';
         if (class_exists($serviceInterfaceNamespace)) {
             $serviceInstance = app($serviceInterfaceNamespace);
@@ -76,7 +77,7 @@ class DashboardController extends Controller
                     ['tb2,language_id', '=', $this->language],
                 ]
             ],
-            'perpage' =>10,
+            'perpage' =>25,
             'paginationConfig' => [
                 'path'=>$model.'/index',
                 'groupBy' => ['id', 'name']

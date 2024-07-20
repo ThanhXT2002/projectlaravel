@@ -67,101 +67,184 @@
         })
     }
 
-    HT.menuRowHtml = ()=>{
-        let html
-        let $row  = $('<div>').addClass('row mb-3 menu-item')
-        const colums = [
-            {class: 'col-lg-4', name: 'menu[name][]'},
-            {class: 'col-lg-6', name: 'menu[canonical][]'},
-            {class: 'col-lg-1', name: 'menu[order][]', value: 0},
-            
+    HT.menuRowHtml = (option) => {
+        let $row = $('<div>').addClass('row mb-3 menu-item ' + ((typeof(option) != 'undefined') ? option.canonical : ''));
+    
+        const columns = [
+            { class: 'col-lg-4', name: 'menu[name][]', value: (typeof(option) != 'undefined') ? option.name : '' },
+            { class: 'col-lg-6', name: 'menu[canonical][]', value: (typeof(option) != 'undefined') ? option.canonical : '' },
+            { class: 'col-lg-1', name: 'menu[order][]', value: 0 },
+        ];
+    
+        columns.forEach(col => {
+            let $col = $('<div>').addClass(col.class);
+            let $input = $('<input>')
+                .attr('type', 'text')
+                .addClass('form-control form-control-sm rounded-0' + ((col.name == 'menu[order][]') ? ' int text-right' : ''))
+                .attr('name', col.name)
+                .attr('value', col.value);
+            $col.append($input);
+            $row.append($col);
+        });
+    
+        let $removeCol = $('<div>').addClass('col-lg-1 text-center');
+        let $a = $('<a>').addClass('delete-menu btn btn-info btn-sm');
+        let $i = $('<i>').addClass('fas fa-trash');
+        $a.append($i);
+        $removeCol.append($a);
+        $row.append($removeCol);
+    
+        return $row;
+    };
+    
 
-        ]
+    HT.deleteMenuRow = () => {
+        // Lắng nghe sự kiện click trên các phần tử có class 'delete-menu'
+        $(document).on('click', '.delete-menu', function() {
+            let _this = $(this); // Lấy đối tượng hiện tại được click
+    
+            // Tìm phần tử cha có class 'menu-item' và xóa nó
+            _this.parents('.menu-item').remove();
+    
+            // Gọi hàm kiểm tra độ dài của các mục menu
+            HT.checkMenuItemLength(); // Giả sử bạn muốn gọi hàm này
+        });
+    };
+    
 
-        colums.forEach(col=>{
-            let $col = $('<div>').addClass(col.class)
-            let $input = $('<input>').attr('type', 'text')
-                        .addClass('form-control form-control-sm rounded-0' +((col.name == 'menu[order][]') ? 'int text-right' : ''))
-                        .attr('name', col.name)
-                        .attr('value', col.value)
-            $col.append($input)
-            $row.append($col)
-        })
-
-        let $removeCol = $('<div>').addClass('col-lg-1 text-center')
-        let $a = $('<a>').addClass('delete-menu btn btn-info btn-sm')
-        let $i = $('<i>').addClass('fas fa-trash')
-        $a.append($i)
-        $removeCol.append($a)
-        $row.append($removeCol)
-
-        return $row
-    }
-
-    HT.deleteMenuRow = ()  =>{
-            $(document).on('click', '.delete-menu', function(){
-                let _this = $(this)
-                _this.parents('.menu-item').remove()
-                HT.checkMenuItemLangth()
-            })
-    }
-
-    HT.checkMenuItemLangth = () =>{
+    HT.checkMenuItemLength = () =>{
         if($('.menu-item').length === 0){
             $('.notification').show()
         }
     }
 
-    HT.getMenu = () =>{
-        $(document).on('click', '.menu-module', function(){
-            let _this = $(this)
+    HT.getMenu = () => {
+        $(document).on('click', '.menu-module', function() {
+            let _this = $(this);
             let option = {
                 model: _this.attr('data-model')
-            }
+            };
+            let target = _this.parents('.card').find('.menu-list');
+            HT.sendAjaxGetMenu(option, target )
+    
+            
+        });
+    };
 
-            $.ajax({
-                url: 'ajax/dashboard/getMenu', // URL xử lý yêu cầu AJAX
-                type: 'GET', // Phương thức gửi dữ liệu
-                data: option, // Dữ liệu được gửi
-                dataType: 'json', // Kiểu dữ liệu nhận về
-                beforSend: function(){
-                    _this.parents('card').find('.menu-list').html('')
-                },
-                success: function(res) {
-                   let html = ''
-                   for(let i = 0; i < res.data.length; i++){
-                    html += HT.renderModelMenu(res.data[i])
-                   }
-                   _this.parents('card').find('.menu-list').html(html)
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    // Xử lý lỗi khi yêu cầu thất bại
-                    
-                        console.log('Lỗi: ' + textStatus + ' ' + errorThrown) // Hiển thị lỗi khác
-                  
+    HT.sendAjaxGetMenu = (option, target) => {
+        $.ajax({
+            url: 'ajax/dashboard/getMenu', // URL xử lý yêu cầu AJAX
+            type: 'GET', // Phương thức gửi dữ liệu
+            data: option, // Dữ liệu được gửi
+            dataType: 'json', // Kiểu dữ liệu nhận về
+            beforeSend: function() {
+                _this.parents('.card').find('.menu-list').html(''); // Sửa lỗi chính tả và đảm bảo đúng lớp phần tử cha
+            },
+            success: function(res) {
+                let html = '';
+                for (let i = 0; i < res.data.length; i++) {
+                    html += HT.renderModelMenu(res.data[i]); // Gọi hàm để tạo HTML từ dữ liệu
                 }
-            })
+                html += HT.menuLinks(res.links); // Thêm liên kết phân trang
+                target.html(html)
+                
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Xử lý lỗi khi yêu cầu thất bại
+                console.log('Lỗi: ' + textStatus + ' ' + errorThrown); // Hiển thị lỗi khác
+            }
+        });
+    }
+    
+
+    HT.menuLinks = (links) => {
+        let paginationUl = $('<ul>').addClass('pagination'); 
+        $.each(links, function(index, link) {
+            let liClass = 'page-item';
+            if (link.active) {
+                liClass += ' active';
+            } else if (!link.url) {
+                liClass += ' disabled';
+            }
+            let li = $('<li>').addClass(liClass);
+            if (link.label == 'pagination.previous') {
+                let a = $('<a>').addClass('page-link').attr('aria-hidden', true).html('<');
+                li.append(a);
+            } else if (link.label == 'pagination.next') {
+                let a = $('<a>').addClass('page-link').attr('aria-hidden', true).html('>');
+                li.append(a);
+            }
+            paginationUl.append(li); 
+        });
+        let nav = $('<nav>').append(paginationUl); 
+        return nav;
+    }
+
+    HT.getPaginationMenu = () =>{
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault()
+            let _this = $(this)
+            let option = {
+                model: _this.parents('.collapse').attr('id'),
+                page:_this.text()
+            }
+            let target = _this.parents('.menu-list')
+            HT.sendAjaxGetMenu(option, target)
         })
     }
 
+
+
+
+
     HT.renderModelMenu = (object) => {
+    let html = '';
+    html += '<div class="m-item">';
+    html += '    <div class="icheck-success d-inline">';
+    html += '        <input type="checkbox" id="' + object.canonical + '" value="' + object.canonical + '" name="" class="choose-menu" />';
+    html += '        <label for="' + object.canonical + '" class="text-muted font-weight-normal no-select">' + object.name + '</label>';
+    html += '    </div>';
+    html += '</div>';
 
-        let html = ''
-        html += '<div class="m-item">'
-            html += '<div class="icheck-success d-inline">'
-                html += '<input type="checkbox" id="'+object.canonical+'" value="'+object.canonical+'" name="" class="menuInputCheckbox" />'
-                html += '<label for="'+object.canonical+'" class="text-muted font-weight-normal no-select">'+object.name+'</label>'
-            html += '</div>'
-        html += '</div>'
+    return html;
+    };
 
-        return html
-}
+    HT.chooseMenu = () => {
+        // Lắng nghe sự kiện click trên các checkbox có class 'choose-menu'
+        $(document).on('click', '.choose-menu', function() {
+            let _this = $(this); // Lấy đối tượng checkbox hiện tại
+            let canonical = _this.val(); // Lấy giá trị của checkbox
+            let name = _this.siblings('label').text(); // Lấy tên từ label tương ứng
+    
+            // Tạo hàng menu mới với dữ liệu từ checkbox
+            let $row = HT.menuRowHtml({
+                name: name,
+                canonical: canonical
+            });
+    
+            // Kiểm tra xem checkbox có được chọn không
+            let isChecked = _this.prop('checked');
+    
+            if (isChecked) {
+                // Nếu checkbox được chọn, thêm hàng menu vào .menu-wrapper
+                $('.menu-wrapper').append($row).find('.notification').hide();
+            } else {
+                // Nếu checkbox không được chọn, xóa hàng menu tương ứng
+                $('.menu-wrapper').find('.menu-item.' + canonical).remove();
+                HT.checkMenuItemLength();
+            }
+        });
+    };
+    
 
     
     $(document).ready(function() {
         HT.createMenuCatelogue()
         HT.createMenuRow()
+        HT.deleteMenuRow()
         HT.getMenu()
+        HT.chooseMenu()
+        HT.getPaginationMenu()
         
         
     })

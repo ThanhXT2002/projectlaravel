@@ -64,6 +64,9 @@
                                 </div>
                                </form>
                                <div class="menu-list mt-3">
+                                <div id="paginationMenu">
+                                    
+                                </div>
                                 {{-- <div class="m-item">
                                     <div class="icheck-success d-inline">
                                         <input type="checkbox" id="menuCheckbox" 
