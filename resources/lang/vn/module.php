@@ -1,6 +1,11 @@
 <?php
     return [
-        'PostCatalogue' =>'Nhom bai viet',
-        'Post' => 'Bai Viet'
+        'model'=>[
+            'PostCatalogue' =>'Nhom Bai Viet',
+            'Post' => 'Bài Viết ',
+            'ProductCatalogue'=>'Nhom, San Pham',
+            'Product' => 'San Pham' 
+        ]
+       
     ]
 ?>

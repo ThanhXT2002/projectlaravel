@@ -37,7 +37,7 @@
                 beforeSend: function() {
                     // Xóa thông báo lỗi trước khi gửi yêu cầu mới
                     _form.find('.error').html('')
-                    _form.find('.form-error')
+                    // _form.find('.form-error')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     // Xử lý lỗi khi yêu cầu thất bại
@@ -112,10 +112,37 @@
         }
     }
 
+    HT.getMenu = () =>{
+        $(document).on('click', '.menu-module', function(){
+            let _this = $(this)
+            let option = {
+                model: _this.attr('data-model')
+            }
+
+            $.ajax({
+                url: 'ajax/dashboard/getMenu', // URL xử lý yêu cầu AJAX
+                type: 'GET', // Phương thức gửi dữ liệu
+                data: option, // Dữ liệu được gửi
+                dataType: 'json', // Kiểu dữ liệu nhận về
+                success: function(res) {
+                   
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    // Xử lý lỗi khi yêu cầu thất bại
+                    
+                        console.log('Lỗi: ' + textStatus + ' ' + errorThrown) // Hiển thị lỗi khác
+                  
+                }
+            })
+        })
+    }
+
     
     $(document).ready(function() {
         HT.createMenuCatelogue()
         HT.createMenuRow()
+        HT.getMenu()
+        
         
     })
 
